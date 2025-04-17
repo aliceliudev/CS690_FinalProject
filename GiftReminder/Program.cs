@@ -5,12 +5,13 @@ using System.Globalization;
 
 namespace GiftReminder
 {
-    class Program
-    {
+    public class Program
+    {  
+        public static bool IsTesting = false;
         private static readonly DataService _dataService = new();
         private static readonly ReminderService _reminderService = new(_dataService);
 
-        static void Main(string[] args)
+       public static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             
@@ -26,11 +27,12 @@ namespace GiftReminder
             ShowMainMenu();
         }
 
-        static void ShowMainMenu()
-        {
+        public static void ShowMainMenu()
+        {  if (IsTesting)
+                return;
             while (true)
             {
-                Console.Clear();
+                TryClear();
                 Console.WriteLine("🎁 Gift Reminder Console");
                 Console.WriteLine("1. Add Contact");
                 Console.WriteLine("2. Add Gift");
@@ -57,10 +59,15 @@ namespace GiftReminder
                 }
             }
         }
+    public static void TryClear()
+        {
+            try { Console.Clear(); }
+            catch { /* ignore in test or non-console environments */ }
+        }
 
         static void AddContact()
         {
-            Console.Clear();
+            TryClear();
             Console.WriteLine("➕ Add New Contact");
             Console.WriteLine("------------------");
 
@@ -118,7 +125,7 @@ namespace GiftReminder
 
         static void AddGift()
         {
-            Console.Clear();
+            TryClear();
             var contacts = _dataService.LoadContacts();
             
             if (!contacts.Any())
@@ -173,7 +180,7 @@ namespace GiftReminder
 
         static void CheckRemindersMenu()
         {
-            Console.Clear();
+            TryClear();
             Console.Write("Check next how many days? (7): ");
             if (!int.TryParse(Console.ReadLine(), out var days) || days <= 0)
                 days = 7;
@@ -187,7 +194,7 @@ namespace GiftReminder
 
         static void DisplayReminders(List<(Contact contact, int days)> reminders)
         {
-            Console.Clear();
+            TryClear();
             Console.WriteLine("🔔 Upcoming Reminders");
             Console.WriteLine("---------------------");
             Console.WriteLine($"Today is {DateTime.Today:MMMM d, yyyy}\n");
@@ -223,7 +230,7 @@ namespace GiftReminder
 
         static void ListContacts()
         {
-            Console.Clear();
+            TryClear();
             var contacts = _dataService.LoadContacts();
             
             Console.WriteLine("📋 All Contacts");
@@ -239,6 +246,7 @@ namespace GiftReminder
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
         }
+       
 
         static bool ValidateProperty(object model, string propertyName, bool showErrors = true)
         {
