@@ -14,6 +14,7 @@ dotnet run
 
 # Self-Contained Exectuable
 ```bash
-dotnet publish -c Release -r win-x64 --self-contained true
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+
 ```
 
