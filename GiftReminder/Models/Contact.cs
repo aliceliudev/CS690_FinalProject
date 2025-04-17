@@ -1,4 +1,6 @@
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization; 
 
 namespace GiftReminder.Models
 {
@@ -18,20 +20,26 @@ namespace GiftReminder.Models
 
         public string? CustomOccasionName { get; set; }
 
-        public int DaysUntilEvent
+    public int DaysUntilEvent
+{
+    get
+    {
+        var today = DateTime.Today;
+        var eventDate = DateTime.ParseExact(
+            EventDate, 
+            "MM-dd", 
+            CultureInfo.InvariantCulture); 
+        
+        var nextDate = new DateTime(today.Year, eventDate.Month, eventDate.Day);
+        
+        if (nextDate < today)
         {
-            get
-            {
-                var today = DateTime.Today;
-                var eventDate = DateTime.ParseExact(EventDate, "MM-dd", null);
-                var nextDate = new DateTime(today.Year, eventDate.Month, eventDate.Day);
-                
-                if (nextDate < today) 
-                    nextDate = nextDate.AddYears(1);
-                
-                return (nextDate - today).Days;
-            }
+            nextDate = nextDate.AddYears(1);
         }
+        
+        return (nextDate - today).Days;
+    }
+}
 
         public DateTime NextOccurrence => DateTime.Today.AddDays(DaysUntilEvent);
 

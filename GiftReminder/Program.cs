@@ -15,10 +15,10 @@ namespace GiftReminder
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             
             // Check reminders on startup
-            var upcoming = GetUpcomingReminders(7);
-            if (upcoming.Any())
+            var reminders = _reminderService.GetUpcomingReminders(7);
+            if (reminders.Any())
             {
-                DisplayReminders(upcoming);
+                DisplayReminders(reminders);
                 Console.WriteLine("\nPress any key to continue to main menu...");
                 Console.ReadKey();
             }
@@ -36,30 +36,24 @@ namespace GiftReminder
                 Console.WriteLine("2. Add Gift");
                 Console.WriteLine("3. Check Reminders");
                 Console.WriteLine("4. List All Contacts");
+                Console.WriteLine("5. Debug Date Report");
                 Console.WriteLine("0. Exit");
                 Console.Write("\nSelect option: ");
 
-                var input = Console.ReadLine();
-                switch (input)
+                switch (Console.ReadLine())
                 {
-                    case "1":
-                        AddContact();
-                        break;
-                    case "2":
-                        AddGift();
-                        break;
-                    case "3":
-                        CheckRemindersMenu();
-                        break;
-                    case "4":
-                        ListContacts();
-                        break;
-                    case "0":
-                        return;
-                    default:
-                        Console.WriteLine("Invalid option!");
-                        Thread.Sleep(500);
-                        break;
+                    case "1": AddContact(); break;
+                    case "2": AddGift(); break;
+                    case "3": CheckRemindersMenu(); break;
+                    case "4": ListContacts(); break;
+                    case "5": _reminderService.ValidateReminderDates();
+                              Console.WriteLine("\nPress any key to continue...");
+                              Console.ReadKey();
+                              break;
+                    case "0": return;
+                    default: Console.WriteLine("Invalid option!"); 
+                             Thread.Sleep(500); 
+                             break;
                 }
             }
         }
@@ -184,28 +178,21 @@ namespace GiftReminder
             if (!int.TryParse(Console.ReadLine(), out var days) || days <= 0)
                 days = 7;
 
-            var reminders = GetUpcomingReminders(days);
+            var reminders = _reminderService.GetUpcomingReminders(days);
             DisplayReminders(reminders);
 
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
         }
 
-        static List<Contact> GetUpcomingReminders(int days)
-        {
-            return _dataService.LoadContacts()
-                .Where(c => c.DaysUntilEvent <= days)
-                .OrderBy(c => c.DaysUntilEvent)
-                .ToList();
-        }
-
-        static void DisplayReminders(List<Contact> contacts)
+        static void DisplayReminders(List<(Contact contact, int days)> reminders)
         {
             Console.Clear();
             Console.WriteLine("🔔 Upcoming Reminders");
             Console.WriteLine("---------------------");
+            Console.WriteLine($"Today is {DateTime.Today:MMMM d, yyyy}\n");
 
-            if (!contacts.Any())
+            if (!reminders.Any())
             {
                 Console.WriteLine("No upcoming events found.");
                 return;
@@ -213,13 +200,13 @@ namespace GiftReminder
 
             var gifts = _dataService.LoadGifts();
 
-            foreach (var contact in contacts)
+            foreach (var (contact, days) in reminders)
             {
                 Console.WriteLine($"\n{contact.Name}'s {contact.DisplayOccasionName}");
-                Console.WriteLine($"📅 {contact.NextOccurrence:MMMM d} (in {contact.DaysUntilEvent} days)");
+                Console.WriteLine($"📅 Date: {contact.NextOccurrence:MMMM d} (in {days} days)");
                 
                 if (!string.IsNullOrEmpty(contact.Phone))
-                    Console.WriteLine($"📞 {contact.Phone}");
+                    Console.WriteLine($"📞 Contact: {contact.Phone}");
 
                 var contactGifts = gifts.Where(g => g.ContactName == contact.Name).ToList();
                 if (contactGifts.Any())

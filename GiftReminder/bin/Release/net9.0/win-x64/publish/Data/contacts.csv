@@ -1,3 +1,2 @@
-Name|Birthday|Phone|OccasionType|CustomName
-alice|08-10||Custom|appointment
-sam joyce|04-20||Birthday|
+Name|Date|Phone|OccasionType|CustomOccasionName
+joyce|04-19|333-4444|Custom|competition
