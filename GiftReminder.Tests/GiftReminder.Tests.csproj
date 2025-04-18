@@ -1,0 +1,29 @@
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>GiftReminder.Tests</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+</PropertyGroup>
+<PropertyGroup>
+  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+</PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GiftReminder\GiftReminder.csproj" />
+  </ItemGroup>
+
+</Project>

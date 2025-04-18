@@ -32,7 +32,7 @@ namespace GiftReminder.Services
                 File.WriteAllText(_giftsPath, GiftsHeader + Environment.NewLine);
         }
 
-        public List<Contact> LoadContacts()
+        public virtual List<Contact> LoadContacts()
         {
             try
             {
